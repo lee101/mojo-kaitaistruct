@@ -89,15 +89,19 @@ and verifies the result against upstream before printing.
 
 | operation | mojo-kaitaistruct | upstream 0.11 | speedup |
 | --- | ---: | ---: | ---: |
-| `process_xor_one`, 8 MiB | 2.33 ms | 794.60 ms | 341.76x |
-| `process_xor_many`, 8 MiB / 13-byte key | 69.27 ms | 1043.93 ms | 15.07x |
-| `process_rotate_left`, 8 MiB | 8.11 ms | 1490.19 ms | 183.75x |
+| `process_xor_one`, 8 MiB | 0.93 ms | 537.07 ms | 578.46x |
+| `process_xor_many`, 8 MiB / 13-byte key | 43.66 ms | 647.99 ms | 14.84x |
+| `process_rotate_left`, 8 MiB | 5.55 ms | 1418.10 ms | 255.57x |
 
 These results compare Mojo loops with upstream’s Python generator expressions.
 They do not imply that scalar reads are faster: those intentionally retain the
 upstream `struct.Struct` strategy.
 
-No parallel or GPU path is enabled.
+No parallel or GPU path is enabled. All three kernels are low-arithmetic-intensity,
+memory-bound byte transforms (at most a few bitwise operations per input and output
+byte), so thread-launch and host/device-transfer overhead would not be justified.
+The slowest relative result is still 14.84x faster than upstream, above the 5x cutoff
+for further optimization.
 
 ## How it works
 
