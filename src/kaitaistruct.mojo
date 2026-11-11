@@ -13,7 +13,7 @@ def mks_xor_one(
     var key_vec = SIMD[DType.uint8, W](UInt8(key))
     var i = 0
     while i + W <= n:
-        dst.store(i, src.load[width=W](i) ^ key_vec)
+        dst.store(i, src.unsafe_load[width=W](i) ^ key_vec)
         i += W
     while i < n:
         dst[i] = src[i] ^ UInt8(key)
